@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=2.0">
+        <div class="created-by">Created by Priyanshu Jangra</div>
+    
+    <!-- TAILWIND CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- LEAFLET MAPS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <!-- EXIF-js LIBRARY -->
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+
+    <!-- JSPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <style>
+        /* DARK TACTICAL CYBER THEME */
+        :root {
+            --bg-dark: #030407;
+            --bg-panel: #0b0f14;
+            --bg-card: #11161d;
+            --neon-cyan: #00f3ff;
+            --neon-red: #ff003c;
+            --neon-green: #00ff9d;
+            --neon-yellow: #ffea00;
+            --border-color: #1e2530;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+        }
+
+        * { scrollbar-width: thin; scrollbar-color: #333 #000; }
+        *::-webkit-scrollbar { width: 6px; }
+        *::-webkit-scrollbar-track { background: #050505; }
+        *::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        *::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        .bg-grid {
+            background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 25px 25px;
+        }
+
+        .glass-panel {
+            background: rgba(11, 15, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
+        .neon- cyan { color: var(--neon-cyan); }
+        .neon-red { color: var(--neon-red); }
+        .neon-green { color: var(--neon-green); }
+        
+        .neon-border { box-shadow: 0 0 10px rgba(0, 243, 255, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.5); }
+
+        .cyber-input {
+            background: #050505;
+            border: 1px solid #333;
+            color: var(--neon-cyan);
+            padding: 8px 12px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .cyber-input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+
+        .cyber-btn {
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 8px 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 11px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .cyber-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px var(--neon-cyan); }
+
+        .cyber-btn-red {
+            border-color: var(--neon-red);
+            color: var(--neon-red);
+        }
+        .cyber-btn-red:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 20px var(--neon-red); }
+
+        .side-nav button {
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            color: #64748b;
+        }
+        .side-nav button:hover { background: rgba(0, 243, 255, 0.05); color: var(--neon-cyan); }
+        .side-nav button.active {
+            background: rgba(0, 243, 255, 0.1);
+            border-left-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        .leaflet-container { background: #000 !important; }
+        .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+
+        .scanline {
+            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            opacity: 0.3;
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        @keyframes scan { 0% { top: -2px; opacity: 0; } 50% { opacity: 0.5; } 100% { top: 100%; opacity: 0; } }
+
+        .data-table th { border-bottom: 1px solid #333; color: #64748b; font-weight: normal; padding: 10px; text-align: left; }
+        .data-table td { padding: 10px; border-bottom: 1px solid #1a1f29; }
+        .data-table tr:hover { background: rgba(0, 243, 255, 0.02); }
+
+        .tab-active { border-bottom: 2px solid var(--neon-cyan); color: var(--neon-cyan); }
+        .tab-inactive { color: #64748b; border-bottom: 2px solid transparent; }
+        .tab-inactive:hover { color: #94a3b8; }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <!-- SCANLINE EFFECT -->
+    <div class="scanline"></div>
+
+    <!-- TOP HEADER -->
+    <header class="h-14 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-5 shrink-0">
+        <div class="flex items-center gap-4">
+            <div class="w-9 h-9 bg-cyan-500 rounded flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                <i class="fas fa-shield-alt text-black text-sm"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-widest text-white">PRO <span class="neon- cyan">META DATA </span> PURIFIER</h1>
+                <div class="text-[10px] text-gray-500 tracking-[3px]">ADVANCED FORENSICS INTELLIGENCE</div>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-6 text-xs">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-green-500 font-bold">SYSTEM ONLINE</span>
+            </div>
+            <div class="h-4 w-px bg-gray-700"></div>
+            <div id="clock" class="text-cyan-400 font-mono">00:00:00</div>
+            <div class="flex items-center gap-2">
+                <i class="fas fa-user-secret text-gray-500"></i>
+                <span class="text-gray-400">INVESTIGATOR: ADMIN</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- SIDEBAR -->
+        <aside class="w-60 bg-gray-900 border-r border-gray-800 flex flex-col shrink-0 side-nav">
+            <div class="p-2 space-y-1">
+                <button onclick="app.nav('dashboard')" class="w-full text-left p-3 rounded flex items-center gap-3 active" id="nav-dashboard">
+                    <i class="fas fa-th-large w-5 text-center"></i> <span>Dashboard</span>
+                </button>
+                <button onclick="app.nav('upload')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-upload">
+                    <i class="fas fa-upload w-5 text-center"></i> <span>Evidence Locker</span>
+                </button>
+                <button onclick="app.nav('analysis')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-analysis">
+                    <i class="fas fa-microscope w-5 text-center"></i> <span>Deep Analysis</span>
+                </button>
+                <button onclick="app.nav('exif')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-exif">
+                    <i class="fas fa-camera w-5 text-center"></i> <span>EXIF Intel</span>
+                </button>
+                <button onclick="app.nav('integrity')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-integrity">
+                    <i class="fas fa-fingerprint w-5 text-center"></i> <span>Integrity / Hash</span>
+                </button>
+                <button onclick="app.nav('forensics')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-forensics">
+                    <i class="fas fa-user-slash w-5 text-center"></i> <span>Anti-Forensics</span>
+                </button>
+                <button onclick="app.nav('timeline')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-timeline">
+                    <i class="fas fa-stream w-5 text-center"></i> <span>Timeline</span>
+                </button>
+                <button onclick="app.nav('map')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-map">
+                    <i class="fas fa-globe w-5 text-center"></i> <span>Geo Intel</span>
+                </button>
+                <button onclick="app.nav('documents')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-documents">
+                    <i class="fas fa-file-alt w-5 text-center"></i> <span>Doc Forensics</span>
+                </button>
+                <button onclick="app.nav('chain')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-chain">
+                    <i class="fas fa-link w-5 text-center"></i> <span>Chain Custody</span>
+                </button>
+                <button onclick="app.nav('cases')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-cases">
+                    <i class="fas fa-briefcase w-5 text-center"></i> <span>Case Mgmt</span>
+                </button>
+                <button onclick="app.nav('notes')" class="w-full text-left p-3 rounded flex items-center gap-3" id="nav-notes">
+                    <i class="fas fa-sticky-note w-5 text-center"></i> <span>Notes</span>
+                </button>
+            </div>
+            
+            <div class="mt-auto p-4 border-t border-gray-800 bg-gray-900">
+                <div class="text-xs text-gray-500 mb-1">ACTIVE CASE</div>
+                <div class="text-sm font-bold text-white" id="case-name-display">CASE-2024-001</div>
+                <div class="flex justify-between mt-2">
+                    <div class="text-xs text-red-500">THREAT: HIGH</div>
+                    <div class="text-xs text-green-500">EVIDENCE: <span id="evidence-count">0</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 bg-black relative overflow-hidden bg-grid">
+            <div class="absolute inset-0 pointer-events-none scanline" style="top: -10%;"></div>
+            <div class="h-full overflow-y-auto p-6 relative z-10" id="main-content">
+                <!-- CONTENT INJECTED BY JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL -->
+    <div id="modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+        <div class="glass-panel p-6 rounded-lg max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
+                <h3 class="text-lg font-bold" id="modal-title">Modal Title</h3>
+                <button onclick="app.closeModal()" class="text-gray-500 hover:text-red-500"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div id="toast" class="fixed bottom-4 right-4 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <div class="glass-panel p-4 rounded flex items-center gap-3 border-l-4 border-cyan-500" id="toast-content">
+            <i class="fas fa-bell text-cyan-500"></i>
+            <span id="toast-msg">Notification</span>
+        </div>
+    </div>
+
+    <!-- LEAFLET JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- APP JS -->
+    <script src="scipt.js"></script>
+
+   <!-- PDF>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>
