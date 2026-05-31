@@ -130,16 +130,29 @@ Use notes in PDF report generation
 The platform automatically generates comprehensive forensic investigation reports in PDF format. Investigators can download detailed reports containing:
 
 📊 Evidence Collection Logs
+
 🖼️ Metadata Analysis Results
+
 📷 EXIF Data Extraction Reports
+
 🔐 File Hash Verification Results (MD5, SHA-1, SHA-256)
+
 ⏳ Timeline Investigation Data
+
 ⛓️ Chain of Custody Records
+
 🌍 Geo-Location Intelligence Findings
+
 📝 Document Forensics Results
+
 🚨 Anti-Forensics Detection Logs
+
 📝 Investigator Notes and Case Summary
 The generated PDF serves as a court-ready forensic report that preserves investigation findings in a structured and professional format for legal, compliance, and incident response purposes.
+
+<p align="justify">
+  <img src="more pro.png" alt="PRO METADATA PURIFIER Interface" width="800">
+</p>
 
 ## 🛠️ Tech Stack
 
