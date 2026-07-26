@@ -164,13 +164,7 @@ The generated PDF serves as a court-ready forensic report that preserves investi
 
 **Server:** ![Apache Tomcat](https://img.shields.io/badge/Apache_Tomcat-F8C75A?style=flat&logo=apache) ![Servlet](https://img.shields.io/badge/Servlet-FF6F00?style=flat) ![JSP](https://img.shields.io/badge/JSP-BF360C?style=flat)
 
----
 
-## 🤝 Contributing
-
-Contributions are welcome! If you find this project helpful, feel free to contribute.
-
-We appreciate all contributions, whether it's bug reports, feature requests, or code improvements!
 
 ---
 
@@ -194,5 +188,7 @@ Your support helps me continue developing this project and adding more features.
 For questions or suggestions, feel free to reach out or open an issue on GitHub.
 
 ---
+
+⚠️ This repository is provided for  demonstration purposes only. Viewing the source code does not grant permission to copy, modify, redistribute, or use any part of this project. All rights are reserved by the author.
 
 **Thank you !** 🙏
